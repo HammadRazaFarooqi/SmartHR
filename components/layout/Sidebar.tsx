@@ -2,8 +2,8 @@
 
 import Image from 'next/image'
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
-import { useState } from 'react'
+import { usePathname, useRouter } from 'next/navigation'
+import { useState, useEffect, useTransition } from 'react'
 import {
   Home,
   Star,
@@ -32,13 +32,28 @@ import {
   MessageCircle,
   Bell,
   Mail,
-  Grid3x3
+  Grid3x3,
+  FileText,
+  BookOpen,
+  MapPin,
+  MessageSquare,
+  HelpCircle
 } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 
 export default function Sidebar() {
   const pathname = usePathname()
   const [openMenus, setOpenMenus] = useState<string[]>(['tickets'])
+  
+  // Auto-open menus based on current path
+  useEffect(() => {
+    if (pathname?.startsWith('/content/blogs')) {
+      setOpenMenus(prev => prev.includes('blogs') ? prev : [...prev, 'blogs'])
+    }
+    if (pathname?.startsWith('/content/locations')) {
+      setOpenMenus(prev => prev.includes('locations') ? prev : [...prev, 'locations'])
+    }
+  }, [pathname])
 
   const toggleMenu = (menu: string) => {
     setOpenMenus(prev => 
@@ -103,6 +118,138 @@ export default function Sidebar() {
                 <ChevronDown className={`h-4 w-4 transition-transform ${openMenus.includes('superadmin') ? '' : '-rotate-90'}`} />
               </button>
             </div>
+          </div>
+        </div>
+
+        {/* CONTENT */}
+        <div className="mb-4">
+          <div className="text-xs font-semibold text-gray-500 uppercase mb-2 px-2">CONTENT</div>
+          <div className="space-y-1">
+            <Link 
+              href="/content/pages"
+              prefetch={true}
+              className={`flex items-center px-2 py-2 rounded text-sm ${isActive('/content/pages') ? 'bg-gray-100 text-gray-900' : 'hover:bg-gray-50'}`}
+            >
+              <FileText className="h-4 w-4 mr-2" />
+              <span>Pages</span>
+            </Link>
+            <div>
+              <button 
+                onClick={() => toggleMenu('blogs')}
+                className={`w-full flex items-center justify-between px-2 py-2 rounded text-sm ${
+                  isActive('/content/blogs') ? 'bg-gray-100 text-gray-900' : 'hover:bg-gray-50'
+                }`}
+              >
+                <div className="flex items-center">
+                  <BookOpen className="h-4 w-4 mr-2" />
+                  <span>Blogs</span>
+                </div>
+                <ChevronDown className={`h-4 w-4 transition-transform ${openMenus.includes('blogs') ? '' : '-rotate-90'}`} />
+              </button>
+              {openMenus.includes('blogs') && (
+                <div className="ml-6 mt-1 space-y-1">
+                  <Link 
+                    href="/content/blogs"
+                    prefetch={true}
+                    className={`block px-2 py-1.5 text-sm rounded ${
+                      pathname === '/content/blogs'
+                        ? 'text-orange-600 font-medium' 
+                        : 'hover:bg-gray-50'
+                    }`}
+                  >
+                    All Blogs
+                  </Link>
+                  <Link 
+                    href="/content/blogs/categories"
+                    prefetch={true}
+                    className={`block px-2 py-1.5 text-sm rounded ${
+                      isActive('/content/blogs/categories') ? 'text-orange-600 font-medium' : 'hover:bg-gray-50'
+                    }`}
+                  >
+                    Categories
+                  </Link>
+                  <Link 
+                    href="/content/blogs/comments"
+                    prefetch={true}
+                    className={`block px-2 py-1.5 text-sm rounded ${
+                      isActive('/content/blogs/comments') ? 'text-orange-600 font-medium' : 'hover:bg-gray-50'
+                    }`}
+                  >
+                    Comments
+                  </Link>
+                  <Link 
+                    href="/content/blogs/tags"
+                    prefetch={true}
+                    className={`block px-2 py-1.5 text-sm rounded ${
+                      isActive('/content/blogs/tags') ? 'text-orange-600 font-medium' : 'hover:bg-gray-50'
+                    }`}
+                  >
+                    Blog Tags
+                  </Link>
+                </div>
+              )}
+            </div>
+            <div>
+              <button 
+                onClick={() => toggleMenu('locations')}
+                className={`w-full flex items-center justify-between px-2 py-2 rounded text-sm ${
+                  isActive('/content/locations') ? 'bg-gray-100 text-gray-900' : 'hover:bg-gray-50'
+                }`}
+              >
+                <div className="flex items-center">
+                  <MapPin className="h-4 w-4 mr-2" />
+                  <span>Locations</span>
+                </div>
+                <ChevronDown className={`h-4 w-4 transition-transform ${openMenus.includes('locations') ? '' : '-rotate-90'}`} />
+              </button>
+              {openMenus.includes('locations') && (
+                <div className="ml-6 mt-1 space-y-1">
+                  <Link 
+                    href="/content/locations/countries"
+                    prefetch={true}
+                    className={`block px-2 py-1.5 text-sm rounded ${
+                      isActive('/content/locations/countries') ? 'text-orange-600 font-medium' : 'hover:bg-gray-50'
+                    }`}
+                  >
+                    Countries
+                  </Link>
+                  <Link 
+                    href="/content/locations/states"
+                    prefetch={true}
+                    className={`block px-2 py-1.5 text-sm rounded ${
+                      isActive('/content/locations/states') ? 'text-orange-600 font-medium' : 'hover:bg-gray-50'
+                    }`}
+                  >
+                    States
+                  </Link>
+                  <Link 
+                    href="/content/locations/cities"
+                    prefetch={true}
+                    className={`block px-2 py-1.5 text-sm rounded ${
+                      isActive('/content/locations/cities') ? 'text-orange-600 font-medium' : 'hover:bg-gray-50'
+                    }`}
+                  >
+                    Cities
+                  </Link>
+                </div>
+              )}
+            </div>
+            <Link 
+              href="/content/testimonials"
+              prefetch={true}
+              className={`flex items-center px-2 py-2 rounded text-sm ${isActive('/content/testimonials') ? 'bg-gray-100 text-gray-900' : 'hover:bg-gray-50'}`}
+            >
+              <MessageSquare className="h-4 w-4 mr-2" />
+              <span>Testimonials</span>
+            </Link>
+            <Link 
+              href="/content/faq"
+              prefetch={true}
+              className={`flex items-center px-2 py-2 rounded text-sm ${isActive('/content/faq') ? 'bg-gray-100 text-gray-900' : 'hover:bg-gray-50'}`}
+            >
+              <HelpCircle className="h-4 w-4 mr-2" />
+              <span>FAQ&apos;S</span>
+            </Link>
           </div>
         </div>
 
